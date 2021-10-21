@@ -14,6 +14,7 @@ if it has received a reply to the message it sent (including any newly arrived r
 	1.  If it has not, it will resend the message periodically. The data server i will resend the message every patience[i] second(s), i.e., the data server i will 
 resend the message if patience[i] second(s) have elapsed since the last time the message was sent from this server.
 	2.  Otherwise, no more resending will occur from this server.
+	
 The network becomes idle when there are no messages passing between servers or arriving at servers.
 Return the earliest second starting from which the network becomes idle.
 
