@@ -13,6 +13,7 @@ Note that the length of the last group may be less than or equal to 1 + the leng
 Reverse the nodes in each group with an even length, and return the head of the modified linked list.
 
 
+
 Editorial Link: https://leetcode.com/problems/decode-the-slanted-ciphertext/discuss/1576914/Jump-Columns-%2B-1
 
 
@@ -22,6 +23,72 @@ Time Complexity: O(N), where N is the length of the encoded string
 Space Complexity: O(N), where N is the length of the encoded string
 
 APPROACH 1
+
+class Solution {
+    public String decodeCiphertext(String encodedText, int rows) {
+        
+        int col = encodedText.length() / rows;
+        
+        // storing in an array
+        int k = 0;
+        char[][] arr = new char[rows][col];
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<col; j++){
+                arr[i][j] = encodedText.charAt(k);
+                k++;
+            }
+        }
+        
+        StringBuilder ans = new StringBuilder();
+        if(rows <= col){
+            for(int gap=0; gap<col-rows; gap++){
+                for(int i=0; i<rows; i++){
+                    int j = gap + i;
+
+                    ans.append(arr[i][j]);
+                }
+            }
+
+            int left = rows;
+            for(int gap = col - rows; gap < col; gap++){
+                for(int i=0; i<left; i++){
+                    int j = gap + i;
+                    ans.append(arr[i][j]);
+                }
+                left--;
+            }
+        }
+        else{
+            int left = col;
+            for(int gap = 0; gap < col; gap++){
+                for(int i=0; i<left; i++){
+                    int j = gap + i;
+                    ans.append(arr[i][j]);
+                }
+                left--;
+            }
+        }
+        
+        int idx = ans.length();
+        for(int i=ans.length()-1; i>=0; i--){
+            if(ans.charAt(i) == ' '){
+                idx = i;
+            }
+            else{
+                break;
+            }
+        }
+
+        return ans.toString().substring(0, idx);
+    }
+}
+
+
+
+Time Complexity: O(N), where N is the length of the encoded string
+Space Complexity: O(N), where N is the length of the encoded string
+
+APPROACH 2
 
 class Solution {
 public:
@@ -90,7 +157,7 @@ public:
 Time Complexity: O(N), where N is the length of the encoded string
 Space Complexity: O(N), where N is the length of the encoded string
 
-APPROACH 2
+APPROACH 3
 
 class Solution {
 public:
