@@ -175,12 +175,15 @@ public:
         int ans = INT_MAX;
         int left = 0, right = 0;
         int sum = 0;        
+        
+        // we are trying to find the subarray which is just greater than the target
         while(right < n){
             
-            // increasing the window to get sum of subarray greater than target
+            // increasing the window to get sum of subarray greater than target 
             sum += nums[right];            
             
-            // shortening the window to get minimum subarray which exceeds the target
+            // the subarray's sum can exceed the target or can't exceed
+            // if it exceeds, then shortening the window to get minimum subarray which exceeds the target 
             while(sum >= target){
                 ans = min(ans, right - left + 1);
                 sum -= nums[left];
