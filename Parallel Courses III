@@ -16,8 +16,8 @@ Note: The test cases are generated such that it is possible to complete every co
 
 Editorial Link: https://leetcode.com/problems/parallel-courses-iii/discuss/1537481/C%2B%2B-Topological-Sort-(Kahn's-Algorithm-BFS)
 
-Solution 
 
+Solution 
 
 Time Complexity: O((V + E) * log(V + E)), where V is total number of courses and E is total number of edges between the courses. Here log(E + V) as we are using priority queue
 Space Complexity: O(V), where V is total number of courses
