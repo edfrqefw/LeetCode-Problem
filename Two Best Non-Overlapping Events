@@ -13,8 +13,8 @@ specifically, if you attend an event with end time t, the next event must start 
 
 Video Link: 1. https://www.youtube.com/watch?v=KruCyeofUo8 (APPROACH 1)
             2. https://www.youtube.com/watch?v=DQbfHqzgasU (APPROACH 2)
-            3. (APPROACH 3)
-            4. (APPROACH 4)
+            3. https://youtu.be/Nhvf_hmDa6I?t=1255         (APPROACH 3)
+            4. https://youtu.be/Nhvf_hmDa6I?t=2612         (APPROACH 4)
             
             
 Solution 
@@ -25,6 +25,7 @@ Space Complexity: O(N), where N is the total number of events
 
 
 APPROACH 1
+// SORTING START TIMES OF THE EVENT AND APPLYING BINARY SEARCH
 class Solution {
 public:
     int maxTwoEvents(vector<vector<int>>& events) {
@@ -45,7 +46,11 @@ public:
         });
         
         // Time Complexity: O(N)
-        // stores the max score if we have to select a job from the given interval. As here starting times are sorted, we will find the interval where the end time for a job is smaller than the smallest starting time of the job in the interval. When we will find the interval we can choose any job we want. So, we will find the job which gives max score. The interval will mostly end at last element as we sorted the starting times. Therefore, max score will be calculated using suffix max
+        /* stores the max score if we have to select a job from the given interval. As here starting times are sorted, we will find the interval where the end time 
+           for a job is smaller than the smallest starting time of the job in the interval. When we will find the interval we can choose any job we want. So, we will 
+           find the job which gives max score. The interval will mostly end at last element as we sorted the starting times. Therefore, max score will be calculated using 
+           suffix max
+        */
         vector<int> max_score(n);
         max_score[n-1] = events[n-1][2];
         for(int i=n-2; i>=0; i--){
@@ -67,7 +72,9 @@ public:
             while(low <= high){
                 int mid = ((high - low)/2) + low;
                 
-                // if the end time of the particular job is smaller than the starting time of job we want to select, we will store it's index and search for lower starting times, till start time of the "mid" is smaller than or equal to end time of the job
+                /* if the end time of the particular job is smaller than the starting time of job we want to select, we will store it's index and search for lower 
+                   starting times, till start time of the "mid" is smaller than or equal to end time of the job
+                */
                 if(events[i][1] < events[mid][0]){
                     p = mid;
                     high = mid - 1;
@@ -100,6 +107,7 @@ Space Complexity: O(N), where N is the total number of events
 
 
 APPROACH 2
+// SORTING END TIMES OF THE EVENT AND APPLYING BINARY SEARCH
 class Solution {
 public:
     int maxTwoEvents(vector<vector<int>>& events) {
@@ -120,7 +128,10 @@ public:
         });
         
         // Time Complexity: O(N)
-        // stores the max score if we have to select a job from the given interval. As here ending times are sorted, we will find the interval where the start time for a job is greater than the largest ending time of the job in the interval. When we will find the interval we can choose any job we want. So, we will find the job which gives max score. The interval will mostly start from first element as we sorted the ending times. Therefore, max score will be calculated using prefix max
+        /* stores the max score if we have to select a job from the given interval. As here ending times are sorted, we will find the interval where the start time for 
+           a job is greater than the largest ending time of the job in the interval. When we will find the interval we can choose any job we want. So, we will find the job
+           which gives max score. The interval will mostly start from first element as we sorted the ending times. Therefore, max score will be calculated using prefix max
+        */
         vector<int> max_score(n);
         max_score[0] = events[0][2];
         for(int i=1; i<n; i++){
@@ -142,7 +153,9 @@ public:
             while(low <= high){
                 int mid = ((high - low)/2) + low;
                 
-                // if the start time of the particular job is greater than the end time of job we want to select, we will store it's index and search for higher ending times, till end time of the "mid" is greater than or equal to start time of the job
+                /* if the start time of the particular job is greater than the end time of job we want to select, we will store it's index and search for higher ending 
+                   times, till end time of the "mid" is greater than or equal to start time of the job
+                */
                 if(events[i][0] > events[mid][1]){
                     p = mid;
                     low = mid + 1;
@@ -170,8 +183,100 @@ public:
 
 
 
-Time Complexity: O(N * (log(N)), where N is the total number of events
+Time Complexity: O((N * (log(N)) + N) = O(N * (log(N)), where N is the total number of events
 Space Complexity: O(N), where N is the total number of events
 
 
 APPROACH 3
+// SORTING START TIMES OF THE EVENT AND USING PRIORITY QUEUE
+class Solution {
+public:
+    int maxTwoEvents(vector<vector<int>>& events) {
+        
+        int n = events.size();
+        
+        // sorting in increasing order of starting time
+        sort(events.begin(), events.end());
+        
+        
+        // as priority queue is by default max heap and here we want min heap we will take negative values
+        priority_queue<pair<int, pair<int, int>>> pq;
+        
+            
+        int ans = 0;    // stores the final answer when we consider one or two jobs
+        int max_value = 0;  // stores the max answer when the jobs are done and we are checking whther it will help in other job or not
+        // for every job we will try to find the max score
+        for(int i=0; i<n; i++){
+            
+            // from priority queue we check whether the job present has end time smaller than the starting time of current job and from all jobs which finishes before 
+            // the particular job take max_score
+            while(!pq.empty()  &&  (-1 * pq.top().first < events[i][0])){
+                // if yes, then we will find the max score if do the jobs present in priority queue finsihes before the particular event
+                max_value = max(max_value, pq.top().second.second);
+                pq.pop();
+            }
+            
+            // max score achieved by the particular job
+            ans = max(ans, max_value + events[i][2]);
+            
+            // pushing it in the priority queue for making it available for other jobs
+            pq.push({-1 * events[i][1], {events[i][0], events[i][2]}});
+        }
+        
+        // return max score we can achieve
+        return ans;    
+    }
+};
+
+
+
+Time Complexity: O(N * (log(N)), where N is the total number of events
+Space Complexity: O(N), where N is the total number of events
+
+
+APPROACH 4
+// SORTING START TIMES OF THE EVENT AND USING RECURSION, DP AND BINARY SEARCH
+class Solution {
+public:
+    
+    int func(int idx, int jobs, vector<vector<int>>& events, vector<vector<int>>& dp){
+        
+        // when we have processed all events or we have done 2 jobs, then we wont go further
+        if(idx == events.size()  ||  jobs == 2){
+            return 0;
+        }
+        
+        if(dp[idx][jobs] != -1){
+            return dp[idx][jobs];
+        }
+        
+        
+        // finds the index which will be available after the current job is over
+        vector<int> vec = {events[idx][1], INT_MAX, INT_MAX};
+        int nextind = upper_bound(events.begin(), events.end(), vec) - events.begin();
+        
+        // if we will perform this particular job
+        int val1 = events[idx][2] + func(nextind, jobs + 1, events, dp);
+        
+         
+        // if we dont perform this particular job
+        int val2 = func(idx + 1, jobs, events, dp);
+        
+        // returning the max score out of both
+        return dp[idx][jobs] = max(val1, val2);
+    }
+    
+    
+    int maxTwoEvents(vector<vector<int>>& events) {
+        
+        // sorting in terms of start time
+        sort(events.begin(), events.end());
+        
+        int n = events.size();
+        int k = 2;
+        // stores the max score for all events
+        vector<vector<int>> dp(n, vector<int>(k, -1));
+        
+        return func(0, 0, events, dp);
+    }
+};
