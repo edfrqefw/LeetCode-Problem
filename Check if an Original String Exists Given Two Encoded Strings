@@ -1,0 +1,86 @@
+Problem Number: 2060
+Problem Name: Check if an Original String Exists Given Two Encoded Strings
+Link: https://leetcode.com/problems/check-if-an-original-string-exists-given-two-encoded-strings/
+
+Question
+An original string, consisting of lowercase English letters, can be encoded by the following steps:
+  1. Arbitrarily split it into a sequence of some number of non-empty substrings.
+  2. Arbitrarily choose some elements (possibly none) of the sequence, and replace each with its length (as a numeric string).
+  3. 1Concatenate the sequence as the encoded string.
+
+For example, one way to encode an original string "abcdefghijklmnop" might be:
+  1. Split it as a sequence: ["ab", "cdefghijklmn", "o", "p"].
+  2. Choose the second and third elements to be replaced by their lengths, respectively. The sequence becomes ["ab", "12", "1", "p"].
+  3. Concatenate the elements of the sequence to get the encoded string: "ab121p".
+
+Given two encoded strings s1 and s2, consisting of lowercase English letters and digits 1-9 (inclusive), return true if there exists an original string that could be 
+encoded as both s1 and s2. Otherwise, return false.
+Note: The test cases are generated such that the number of consecutive digits in s1 and s2 does not exceed 3.
+
+
+
+Editorial Link: https://leetcode.com/problems/check-if-an-original-string-exists-given-two-encoded-strings/discuss/1551731/DFS
+
+
+Time Complexity: O(N * M * 2000), where N is the length of string 1 and M is the length of string 2. we will be mulitplying 2000 (reason stated above)
+Space Complexity: O(N * M * 2000), where N is the length of string 1 and M is the length of string 2. we will be mulitplying 2000 (reason stated above)
+
+
+Solution
+class Solution {
+         
+    Boolean[][][] dp;
+    boolean dfs(int i, int j, int diff, String s1, String s2){
+        if (i >= s1.length() && j >= s2.length() && diff == 0) return true;
+        // diff > 0, j > i
+        // diff < 0, i > j
+        // System.out.println(" == "  + diff + " "  + (diff+1000) + " " + dp[i][j][diff + 1000]);
+        
+        if(dp[i][j][diff + 1000] != null){
+            return dp[i][j][diff+1000];
+        }
+        
+        boolean res = false;
+        if(i < s1.length()){
+            if(Character.isDigit(s1.charAt(i))){
+                int value = 0, count = 0;
+                while(i+count < s1.length() && count < 3 && Character.isDigit(s1.charAt(i+count))){
+                    value = value*10 + (s1.charAt(i+count) - '0');
+                    count++;
+                    if(dfs(i+count, j, diff - value, s1, s2)) res = true;
+                }
+            }else{
+                if(diff > 0){
+                    if(dfs(i+1, j, diff-1, s1, s2)) res = true;
+                }else if(diff == 0 && j < s2.length() && s1.charAt(i) == s2.charAt(j)){
+                    if(dfs(i+1, j+1, diff, s1, s2)) res = true;
+                }
+            }
+        }
+        
+        
+        if(j < s2.length()){
+            if(Character.isDigit(s2.charAt(j))){
+                int value = 0, count = 0;
+                while(j + count < s2.length() && count < 3 && Character.isDigit(s2.charAt(j+count))){
+                    value = value*10 + (s2.charAt(j+count) - '0');
+                    count++;
+                    if(dfs(i, j+count, diff + value, s1, s2)) res = true;
+                }
+            }else{
+                if(diff < 0){
+                    if(dfs(i, j+1, diff+1, s1, s2)) res = true;
+                }
+            }
+        }
+        
+        return dp[i][j][diff + 1000] = res;
+    }
+    
+    public boolean possiblyEquals(String s1, String s2) {
+      int m = s1.length();
+      int n = s2.length();
+      dp = new Boolean[m + 1][n + 1][2001];   
+      return dfs(0, 0, 0, s1, s2);
+    }
+}
