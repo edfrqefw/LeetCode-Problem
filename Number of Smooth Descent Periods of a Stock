@@ -12,7 +12,7 @@ Return the number of smooth descent periods.
 Editorial Link: https://leetcode.com/problems/number-of-smooth-descent-periods-of-a-stock/discuss/1635104/CPPJAVAPython-Explanation-with-pictures.
 
 
-Time Complexity: O(N), where N is the length of the string
+Time Complexity: O(N), where N is the number of elements in the array
 Space Complexity: O(1)
 
 
